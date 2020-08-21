@@ -19,6 +19,7 @@ class CachedNetworkImageProvider
   /// The arguments [url] and [scale] must not be null.
   const CachedNetworkImageProvider(
     this.url, {
+    this.cacheKey,
     this.scale = 1.0,
     this.errorListener,
     this.headers,
@@ -33,7 +34,10 @@ class CachedNetworkImageProvider
   final BaseCacheManager cacheManager;
 
   @override
-  final String url;
+  final Function url;
+
+  @override
+  final String cacheKey;
 
   @override
   final double scale;
@@ -106,8 +110,9 @@ class CachedNetworkImageProvider
     assert(key == this);
     try {
       var mngr = cacheManager ?? DefaultCacheManager();
-      await for (var result in mngr.getFileStream(key.url,
-          withProgress: true, headers: headers)) {
+      String url = await key.url();
+      await for (var result in mngr.getFileStream(url,
+          withProgress: true, headers: headers, key: key.cacheKey)) {
         if (result is DownloadProgress) {
           chunkEvents.add(ImageChunkEvent(
             cumulativeBytesLoaded: result.downloaded,
@@ -135,7 +140,7 @@ class CachedNetworkImageProvider
       return false;
     }
     return other is CachedNetworkImageProvider &&
-        other.url == url &&
+        other.cacheKey == cacheKey &&
         other.scale == scale;
   }
 

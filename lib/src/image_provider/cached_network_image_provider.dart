@@ -31,7 +31,8 @@ abstract class CachedNetworkImageProvider
   /// when compiled for web. See the documentation of [ImageRenderMethodForWeb]
   /// for the benefits of each method.
   const factory CachedNetworkImageProvider(
-    String url, {
+    Function url, {
+    String cacheKey,
     double scale,
     @Deprecated('ErrorListener is deprecated, use listeners on the imagestream')
         ErrorListener errorListener,
@@ -50,7 +51,10 @@ abstract class CachedNetworkImageProvider
   ErrorListener get errorListener;
 
   /// The URL from which the image will be fetched.
-  String get url;
+  final Function url;
+
+  /// The cache key used to retrieve the image if set
+  String get cacheKey;
 
   /// The scale to place in the [ImageInfo] object of the image.
   double get scale;

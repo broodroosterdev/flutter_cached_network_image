@@ -16,6 +16,7 @@ class CachedNetworkImageProvider
   /// When the image fails to load [errorListener] is called.
   const CachedNetworkImageProvider(
     this.url, {
+    this.cacheKey,
     this.scale = 1.0,
     this.errorListener,
     this.headers,
@@ -30,7 +31,10 @@ class CachedNetworkImageProvider
 
   /// Web url of the image to load
   @override
-  final String url;
+  final Function url;
+
+  @override
+  final String cacheKey;
 
   /// Scale of the image
   @override
@@ -77,15 +81,16 @@ class CachedNetworkImageProvider
     assert(key == this);
     try {
       var mngr = cacheManager ?? DefaultCacheManager();
-      await for (var result in mngr.getFileStream(key.url,
-          withProgress: true, headers: headers)) {
+      String url = await key.url();
+      await for (var result in mngr.getFileStream(url,
+          withProgress: true, headers: headers, key: key.cacheKey)) {
         if (result is DownloadProgress) {
+          print(result.downloaded);
           chunkEvents.add(ImageChunkEvent(
             cumulativeBytesLoaded: result.downloaded,
             expectedTotalBytes: result.totalSize,
           ));
-        }
-        if (result is FileInfo) {
+        } else if (result is FileInfo) {
           var file = result.file;
           var bytes = await file.readAsBytes();
           var decoded = await decode(bytes);
@@ -103,7 +108,7 @@ class CachedNetworkImageProvider
   @override
   bool operator ==(dynamic other) {
     if (other is CachedNetworkImageProvider) {
-      return url == other.url && scale == other.scale;
+      return cacheKey == other.cacheKey && scale == other.scale;
     }
     return false;
   }
