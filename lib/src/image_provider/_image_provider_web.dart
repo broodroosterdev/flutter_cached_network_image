@@ -34,7 +34,7 @@ class CachedNetworkImageProvider
   final BaseCacheManager cacheManager;
 
   @override
-  final Function url;
+  final FutureOr<String> Function() url;
 
   @override
   final String cacheKey;

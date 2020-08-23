@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -31,7 +33,7 @@ abstract class CachedNetworkImageProvider
   /// when compiled for web. See the documentation of [ImageRenderMethodForWeb]
   /// for the benefits of each method.
   const factory CachedNetworkImageProvider(
-    Function url, {
+    FutureOr<String> Function() url, {
     String cacheKey,
     double scale,
     @Deprecated('ErrorListener is deprecated, use listeners on the imagestream')
@@ -51,7 +53,7 @@ abstract class CachedNetworkImageProvider
   ErrorListener get errorListener;
 
   /// The URL from which the image will be fetched.
-  final Function url;
+  final FutureOr<String> Function() url;
 
   /// The cache key used to retrieve the image if set
   String get cacheKey;

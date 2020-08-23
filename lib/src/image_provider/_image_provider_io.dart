@@ -1,4 +1,4 @@
-import 'dart:async' show Future, StreamController;
+import 'dart:async' show Future, StreamController, FutureOr;
 import 'dart:ui' as ui show Codec;
 
 import 'package:cached_network_image/src/image_provider/multi_image_stream_completer.dart';
@@ -31,7 +31,7 @@ class CachedNetworkImageProvider
 
   /// Web url of the image to load
   @override
-  final Function url;
+  final FutureOr<String> Function() url;
 
   @override
   final String cacheKey;

@@ -9,8 +9,8 @@ Future<ui.Codec> loadAsyncHtmlImage(
   CachedNetworkImageProvider key,
   StreamController<ImageChunkEvent> chunkEvents,
   DecoderCallback decode,
-) {
-  final Uri resolved = Uri.base.resolve(key.url);
+) async {
+  final Uri resolved = Uri.base.resolve(await key.url());
 
   // ignore: undefined_function
   return ui.webOnlyInstantiateImageCodecFromUrl(
